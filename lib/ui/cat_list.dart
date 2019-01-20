@@ -13,7 +13,7 @@ class _CatListState extends State<CatList> {
       style: new TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.bold,
-        fontSize: 32
+        fontSize: 130.0
       )
     );
   }

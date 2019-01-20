@@ -11,6 +11,7 @@ class CatBoxApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
         accentColor: Colors.pink,
+        fontFamily: 'Ubuntu'
       ),
       home: new CatList(),
     );
