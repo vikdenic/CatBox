@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:catbox/services/api.dart';
+import 'package:catbox/model/cat.dart';
+import 'package:catbox/services/api.dart';
 
 class CatList extends StatefulWidget {
   @override
@@ -6,6 +9,21 @@ class CatList extends StatefulWidget {
 }
 
 class _CatListState extends State<CatList> {
+  List<Cat> _cats = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCats();
+  }
+
+  _loadCats() async {
+    String fileData = await DefaultAssetBundle.of(context).loadString('assets/cats.json');
+    for (Cat cat in CatAPI.allCatsFromJson(fileData)) {
+      _cats.add(cat);
+    }
+    print(_cats.toString());
+  }
 
   Widget _getAppTitleWidget() {
     return new Text(

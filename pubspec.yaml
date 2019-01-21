@@ -22,3 +22,5 @@ flutter:
       fonts:
         - asset: fonts/Ubuntu-Regular.ttf
         - asset: fonts/Ubuntu-Bold.ttf
+  assets:
+  - assets/cats.json
