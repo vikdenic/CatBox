@@ -41,8 +41,6 @@ class _CatShowcaseState extends State<CatShowcase>
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return new Padding(
