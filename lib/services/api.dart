@@ -16,17 +16,17 @@ class CatAPI {
   }
 
   static Future<CatAPI> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final FirebaseUser user = await _auth.signInWithGoogle(
-        idToken: googleAuth.accessToken,
-        accessToken: googleAuth.idToken,
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    FirebaseUser user = await _auth.signInWithGoogle(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
     );
     assert(user.email != null);
     assert(user.displayName != null);
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
-    final FirebaseUser currentUser = await _auth.currentUser();
+    FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
 
     return new CatAPI(user);
@@ -38,8 +38,37 @@ class CatAPI {
     return cats;
   }
 
-  Cat _fromDocumentSnapshot(DocumentSnapshot snapshot) {
+  Future<List<Cat>> getAllCats() async {
+    return (await Firestore.instance.collection('cats').getDocuments())
+        .documents
+        .map((snapshot) => _fromDocumentSnapshot(snapshot))
+        .toList();
+  }
 
+  StreamSubscription watch(Cat cat, void onChange(Cat cat)) {
+    return Firestore.instance
+        .collection('cats')
+        .document(cat.documentId)
+        .snapshots()
+        .listen((snapshot) => onChange(_fromDocumentSnapshot(snapshot))
+    );
+  }
+
+  Cat _fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data;
+
+    return new Cat(
+      documentId: snapshot.documentID,
+      externalId: data['id'],
+      name: data['name'],
+      description: data['description'],
+      avatarUrl: data['image_url'],
+      location: data['location'],
+      likeCounter: data['like_counter'],
+      isAdopted: data['adopted'],
+      pictures: new List<String>.from(data['pictures']),
+      cattributes: new List<String>.from(data['cattributes']),
+    );
   }
 
   static Cat _fromMap(Map<String, dynamic> map) {

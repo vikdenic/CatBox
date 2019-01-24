@@ -18,23 +18,27 @@ class _CatListState extends State<CatList> {
   @override
   void initState() {
     super.initState();
-    _loadCats();
+//    _reloadCats;
     _loadFromFirebase();
   }
 
   _loadFromFirebase() async {
     final api = await CatAPI.signInWithGoogle();
+    final cats = await api.getAllCats();
     setState(() {
       _api = api;
+      _cats = cats;
       _profileImage = new NetworkImage(api.firebaseUser.photoUrl);
     });
   }
 
-  _loadCats() async {
-    String fileData = await DefaultAssetBundle.of(context).loadString('assets/cats.json');
-    setState(() {
-      _cats = CatAPI.allCatsFromJson(fileData);
-    });
+  _reloadCats() async {
+    if (_api != null) {
+      final cats = await _api.getAllCats();
+      setState(() {
+        _cats = cats;
+      });
+    }
   }
 
   _navigateToCatDetails(Cat cat, Object avatarTag) {
@@ -103,7 +107,7 @@ class _CatListState extends State<CatList> {
   }
 
   Future<Null> refresh() {
-    _loadCats();
+    _reloadCats();
     return new Future<Null>.value();
   }
 
